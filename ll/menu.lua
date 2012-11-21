@@ -3,6 +3,7 @@
 myawesomemenu = {
    { "manual", terminal .. " -e man awesome" },
    { "edit config", editor_cmd .. " " .. awesome.conffile },
+   { "lock", "xscreensaver-command -lock" },
    { "restart", awesome.restart },
    { "quit", awesome.quit }
 }
