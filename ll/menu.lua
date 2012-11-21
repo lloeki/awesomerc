@@ -13,7 +13,7 @@ mymainmenu = awful.menu({ items = {
                                 { "terminal", terminal },
                                 { "web browser", browser },
                                 { "mail", mail },
-                                { "music", terminal .. " ncmpc" }
+                                { "music", terminal .. " -geometry 55x35 -e ncmpc" }
                             }
                         })
 
