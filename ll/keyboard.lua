@@ -32,7 +32,11 @@ globalkeys = awful.util.table.join(
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
-    awful.key({ }, "Print", function () awful.util.spawn("scrot -e 'mv $f ~/screenshots/ 2>/dev/null'") end),
+    awful.key({ }, "Print", function ()
+        awful.util.spawn("scrot -e 'mv $f ~/screenshots/ 2>/dev/null'")
+        local filename = awful.util.pread("ls -tr1 ~/screenshots | tail -1")
+        naughty.notify({ title="Screenshot saved!", text=filename})
+    end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
 
