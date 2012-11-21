@@ -8,9 +8,13 @@ myawesomemenu = {
    { "quit", awesome.quit }
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal }
-                                  }
+mymainmenu = awful.menu({ items = {
+                                { "awesome", myawesomemenu },
+                                { "terminal", terminal },
+                                { "web browser", browser },
+                                { "mail", mail },
+                                { "music", terminal .. " ncmpc" }
+                            }
                         })
 
 mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
