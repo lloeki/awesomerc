@@ -66,4 +66,42 @@ for s = 1, screen.count() do
     end
 end
 
+-- Persist float layout windows geometry
+
+floatgeoms = {}
+
+client.add_signal("unmanage", function(c)
+    floatgeoms[c.window] = nil
+end)
+
+client.add_signal("manage", function(c)
+    if (awful.layout.get(c.screen) == awful.layout.suit.floating or awful.client.floating.get(c)) then
+        floatgeoms[c.window] = c:geometry()
+
+        c:add_signal("property::geometry", function(c)
+            if (awful.layout.get(c.screen) == awful.layout.suit.floating or awful.client.floating.get(c)) then
+                floatgeoms[c.window] = c:geometry()
+            end
+        end)
+    end
+end)
+
+-- Restore geometry when back on float layout
+
+for s = 1, screen.count() do
+    for t = 1, #tags[s] do
+        mytag = tags[s][t]
+        mytag:add_signal("property::layout", function(t)
+            clients = t:clients()
+            for k = 1, #clients do
+                c = clients[k]
+                if (awful.layout.get(c.screen) == awful.layout.suit.floating or awful.client.floating.get(c)) then
+                    c:geometry(floatgeoms[c.window])
+                end
+
+            end
+        end)
+    end
+end
+
 -- }}}
