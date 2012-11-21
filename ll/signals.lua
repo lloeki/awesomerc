@@ -29,4 +29,41 @@ end)
 client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
+-- Titlebar for floating windows
+
+client.add_signal("manage", function (c, startup)
+
+    -- Add a titlebar if floating layout
+    if (awful.layout.get(c.screen) == awful.layout.suit.floating) then
+        awful.titlebar.add(c, { modkey = modkey })
+    end
+
+    -- Add a titlebar if windows is made floating
+    c:add_signal("property::floating", function(c)
+        if awful.layout.get(c.screen) == awful.layout.suit.floating or awful.client.floating.get(c) then
+            awful.titlebar.add(c, { modkey = modkey })
+        else
+            awful.titlebar.remove(c, { modkey = modkey })
+        end
+    end)
+end)
+
+-- Titlebars everywhere for float layout
+
+for s = 1, screen.count() do
+    for t = 1, #tags[s] do
+        mytag = tags[s][t]
+        mytag:add_signal("property::layout", function(t)
+            clients = t:clients()
+            for c = 1, #clients do
+                if awful.layout.get(clients[c].screen) == awful.layout.suit.floating or awful.client.floating.get(clients[c]) then
+                    awful.titlebar.add(clients[c], { modkey = modkey })
+                else
+                    awful.titlebar.remove(clients[c], { modkey = modkey })
+                end
+            end
+        end)
+    end
+end
+
 -- }}}
