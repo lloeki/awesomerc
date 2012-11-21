@@ -7,7 +7,7 @@ require("beautiful")
 -- Notification library
 require("naughty")
 
-
+require('ll.dbg')
 require('ll.errors')
 require('ll.vars')
 require('ll.tags')
