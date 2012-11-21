@@ -19,7 +19,7 @@ function add_calendar(inc_offset)
     local cal = awful.util.pread("cal -m " .. datespec)
     cal = string.gsub(cal, "^%s*(.-)%s*$", "%1")
     calendar = naughty.notify({
-        text = string.format('<span font_desc="%s">%s</span>', "monospace", os.date("%a, %d %B %Y") .. "\n" .. cal),
+        text = string.format('<span font_desc="%s">%s</span>', "monospace", cal),
         timeout = 0, hover_timeout = 0.5,
         width = 160,
     })
