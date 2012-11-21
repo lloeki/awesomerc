@@ -6,6 +6,8 @@ beautiful.init("/usr/share/awesome/themes/zenburn/theme.lua")
 terminal = "urxvt"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
+browser = "chromium"
+mail = "thunderbird"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
