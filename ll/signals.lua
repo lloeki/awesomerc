@@ -104,4 +104,21 @@ for s = 1, screen.count() do
     end
 end
 
+-- Prevent windows from going above wibox
+
+client.add_signal("manage", function(c)
+    local geometry = c:geometry()
+    if geometry.y < 18+1 then
+        geometry.y = 18+1
+        c:geometry(geometry)
+    end
+    c:add_signal("property::geometry", function(c)
+        local geometry = c:geometry()
+        if geometry.y < 18+1 then
+            geometry.y = 18+1
+            c:geometry(geometry)
+        end
+    end)
+end)
+
 -- }}}
