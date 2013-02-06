@@ -1,6 +1,7 @@
--- {{{ Menu
--- Create a laucher widget and a main menu
-myawesomemenu = {
+local awful = require('awful')
+local menubar = require('menubar')
+
+local awesome_menu = {
    { "manual", terminal .. " -e man awesome" },
    { "edit config", editor_cmd .. " " .. awesome.conffile },
    { "lock", "xscreensaver-command -lock" },
@@ -8,15 +9,15 @@ myawesomemenu = {
    { "quit", awesome.quit }
 }
 
-mymainmenu = awful.menu({ items = {
-                                { "awesome", myawesomemenu },
-                                { "terminal", terminal },
-                                { "web browser", browser },
-                                { "mail", mail },
-                                { "music", terminal .. " -geometry 55x35 -e ncmpc" }
-                            }
-                        })
+local menu = awful.menu({ items = {
+                        { "awesome", awesome_menu },
+                        { "terminal", terminal },
+                        { "web", browser },
+                        { "mail", mail },
+                        { "music", terminal .. " -geometry 55x35 -e ncmpc" }
+                    }
+                })
 
-mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
-                                     menu = mymainmenu })
--- }}}
+menubar.utils.terminal = terminal
+
+return { menu=menu }

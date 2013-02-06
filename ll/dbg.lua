@@ -1,6 +1,6 @@
-Dbg = {}
+local naughty = require('naughty')
 
-function Dbg.table_keys(table)
+local function table_keys(table)
     local keys = {}
     local n = 0
     for k, v in pairs(var) do
@@ -10,11 +10,11 @@ function Dbg.table_keys(table)
     return keys
 end
 
-function Dbg.to_text(var)
+local function to_text(var)
     if type(var) == 'table' then
         text = "{ "
         for k, v in pairs(var) do
-            text = text .. k .. ":" .. Dbg.to_text(v) .. " "
+            text = text .. k .. ":" .. to_text(v) .. " "
         end
         text = text .. "}"
     else
@@ -23,10 +23,10 @@ function Dbg.to_text(var)
     return text
 end
 
-function Dbg.naughty(vars)
+local function notify(vars)
     local text = ""
-    for i=1, #vars do text = text .. "| " .. Dbg.to_text(vars[i]) .. "\n" end
+    for i=1, #vars do text = text .. "| " .. to_text(vars[i]) .. "\n" end
     naughty.notify({ text = string.sub(text, 1, -2), timeout = 10 })
 end
 
-dbg = Dbg.naughty
+return { notify=notify }

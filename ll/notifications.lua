@@ -1,11 +1,13 @@
+naughty = require('naughty')
+
 -- naughty.config.default_preset.timeout          = 5
-naughty.config.default_preset.screen           = 2
-naughty.config.default_preset.position         = "top_right"
+--naughty.config.default_preset.screen           = 2
+--naughty.config.default_preset.position         = "top_right"
 -- naughty.config.default_preset.margin           = 4
 -- naughty.config.default_preset.height           = 16
 -- naughty.config.default_preset.width            = 300
 -- naughty.config.default_preset.gap              = 1
-naughty.config.default_preset.ontop            = true
+--naughty.config.default_preset.ontop            = true
 -- naughty.config.default_preset.font             = beautiful.font or "Verdana 8"
 -- naughty.config.default_preset.icon             = nil
 -- naughty.config.default_preset.icon_size        = 16
