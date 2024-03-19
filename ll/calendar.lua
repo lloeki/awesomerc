@@ -14,18 +14,24 @@ end
 
 local function add_calendar(inc_offset)
     local save_offset = offset
-    remove_calendar()
+    remove_calendar() -- TODO: calendar notification replace_text
     offset = save_offset + inc_offset
     local datespec = os.date("*t")
-    datespec = datespec.year * 12 + datespec.month - 1 + offset
-    datespec = (datespec % 12 + 1) .. " " .. math.floor(datespec / 12)
-    local cal = awful.util.pread("cal -m " .. datespec)
-    cal = string.gsub(cal, "^%s*(.-)%s*$", "%1")
-    calendar = naughty.notify({
-        text = string.format('<span font_desc="%s">%s</span>', "monospace", cal),
-        timeout = 0, hover_timeout = 0.5,
-        width = 160,
-    })
+    local months = datespec.year * 12 + datespec.month - 1 + offset
+    local calm = '' .. months % 12 + 1
+    local caly = '' .. math.floor(months / 12)
+    awful.spawn.easy_async({"cal", "-m", calm, caly}, function(stdout, stderr, reason, exit_code)
+      if exit_code > 0 then
+          naughty.notify({text = reason .. ' ' .. exit_code .. "\n" .. stderr})
+      end
+
+      cal = string.gsub(stdout, "^%s*(.-)%s*$", "%1")
+      calendar = naughty.notify({
+          text = string.format('<span font_desc="%s">%s</span>', "monospace", cal),
+          timeout = 0, hover_timeout = 0.5,
+          width = dpi(160),
+      })
+    end)
 end
 
 local function add_to_clock(clock)

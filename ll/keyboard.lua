@@ -1,19 +1,78 @@
 local awful = require('awful')
 --local tags  = require('ll/tags')
+--local menubar = require("menubar")
+
+local home = os.getenv('HOME')
+local screenshots_dir = home .. '/screenshots'
+local screenshot_pattern = '%Y-%m-%d %H:%M:%S $wx$h'
 
 local globalkeys = awful.util.table.join(
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
-    awful.key({ }, "Print", function ()
-        awful.util.spawn("scrot -e 'mv $f ~/screenshots/ 2>/dev/null'")
-        local filename = awful.util.pread("ls -tr1 ~/screenshots | tail -1")
-        naughty.notify({ title="Screenshot saved!", text=filename})
+    awful.key({ modkey, 'Shift'   }, "p", function ()
+        awful.spawn.easy_async({"scrot", screenshots_dir .. '/' .. screenshot_pattern .. '.png'}, function(stdout, stderr, reason, exit_code)
+            naughty.notify({ title="Screenshot saved!", text=stdout })
+        end)
     end),
+
+    -- TODO: notify { run = }
+    -- TODO: display thumb in notification
+    awful.key({ modkey, 'Control'   }, "p", function ()
+        awful.spawn.easy_async({"scrot", '--select', screenshots_dir .. '/' .. screenshot_pattern .. '.png'}, function(stdout, stderr, reason, exit_code)
+            naughty.notify({ title="Screenshot saved!", text=stdout })
+        end)
+    end),
+    awful.key({ modkey, 'Mod1'   }, "p", function ()
+        awful.spawn.easy_async({"scrot", '--focused', screenshots_dir .. '/' .. screenshot_pattern .. '.png'}, function(stdout, stderr, reason, exit_code)
+            naughty.notify({ title="Screenshot saved!", text=stdout })
+        end)
+    end),
+
+    awful.key({ modkey,           }, "r", function () awful.spawn("rofi -show drun") end,
+              {description = "open desktop app", group = "launcher"}),
+    awful.key({ modkey, "Shift"   }, "r", function () awful.spawn("rofi -show run") end,
+              {description = "run command", group = "launcher"}),
+
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
 
     awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
-    awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end)
+    awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
+
+    awful.key({ modkey,           }, "j",
+        function ()
+            awful.client.focus.byidx( 1)
+        end,
+        {description = "focus next by index", group = "client"}
+    ),
+    awful.key({ modkey,           }, "k",
+        function ()
+            awful.client.focus.byidx(-1)
+        end,
+        {description = "focus previous by index", group = "client"}
+    ),
+    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
+              {description = "swap with next client by index", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
+              {description = "swap with previous client by index", group = "client"}),
+    awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end,
+              {description = "focus the next screen", group = "screen"}),
+    awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
+              {description = "focus the previous screen", group = "screen"}),
+    awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
+              {description = "jump to urgent client", group = "client"}),
+
+    awful.key({ modkey,           }, "Tab",
+        function ()
+            awful.client.focus.history.previous()
+            if client.focus then
+                client.focus:raise()
+            end
+        end,
+        {description = "go back", group = "client"})
+
+--  awful.key({ modkey }, "p", function() menubar.show() end,
+--            {description = "show the menubar", group = "launcher"})
 )
 
 local clientkeys = awful.util.table.join(
@@ -23,13 +82,13 @@ local clientkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
     awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        ),
     awful.key({ modkey, "Shift"   }, "r",      function (c) c:redraw()                       end),
-    awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end),
-    awful.key({ modkey,           }, "n",
-        function (c)
-            -- The client currently has the input focus, so it cannot be
-            -- minimized, since minimized clients can't have the focus.
-            c.minimized = true
-        end),
+ -- awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end),
+ -- awful.key({ modkey,           }, "n",
+ --     function (c)
+ --         -- The client currently has the input focus, so it cannot be
+ --         -- minimized, since minimized clients can't have the focus.
+ --         c.minimized = true
+ --     end),
     awful.key({ modkey,           }, "m",
         function (c)
             c.maximized_horizontal = not c.maximized_horizontal
@@ -39,9 +98,9 @@ local clientkeys = awful.util.table.join(
 
 -- Compute the maximum number of digit we need, limited to 9
 local keynumber = 0
-for s = 1, screen.count() do
+awful.screen.connect_for_each_screen(function(s)
    keynumber = math.min(9, math.max(#tags[s], keynumber));
-end
+end)
 
 -- Bind all key numbers to tags.
 -- Be careful: we use keycodes to make it works on any keyboard layout.
